@@ -13,4 +13,4 @@ COPY functions/ ./functions/
 ENV PORT=8080
 
 # ejecutamos el módulo functions.main
-CMD ["python", "-m", "functions.main"]
+CMD ["python", "main.py"]
