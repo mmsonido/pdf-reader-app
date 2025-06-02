@@ -1,8 +1,8 @@
 resource "google_storage_bucket" "pdf_raw" {
-  name                        = "${var.project_id}-pdf-raw"
-  location                    = "US"
+  name     = "pdf2txt-demo-pdf-raw"
+  location = "US-CENTRAL1"
+  force_destroy               = true
   uniform_bucket_level_access = true
-  public_access_prevention    = "enforced"
 }
 
 resource "google_storage_bucket" "txt" {
