@@ -1,6 +1,6 @@
 resource "google_cloudfunctions2_function" "extractor" {
   name     = "pdf-text-extractor"
-  location = "us-central1"      # ← Debe coincidir con la región del bucket
+  location = "us-central1"      # ← Aquí debe ir us-central1, no “us”
   project  = var.project_id
 
   build_config {
@@ -15,7 +15,6 @@ resource "google_cloudfunctions2_function" "extractor" {
       }
     }
 
-    # Servicio en el formato correcto:
     service_account = "projects/${var.project_id}/serviceAccounts/${google_service_account.func_sa.email}"
   }
 
