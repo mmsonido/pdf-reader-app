@@ -15,7 +15,8 @@ resource "google_cloudfunctions2_function" "extractor" {
       }
     }
 
-    # Must be in projects/<PROJECT_ID>/serviceAccounts/<EMAIL> form
+    # El service_account debe ir en formato:
+    # projects/<PROJECT_ID>/serviceAccounts/<EMAIL>
     service_account = "projects/${var.project_id}/serviceAccounts/${google_service_account.func_sa.email}"
   }
 
@@ -27,7 +28,8 @@ resource "google_cloudfunctions2_function" "extractor" {
       value     = "pdf2txt-demo-pdf-raw"
     }
 
-    retry_policy = "RETRY_POLICY_RETRY"
+    retry_policy   = "RETRY_POLICY_RETRY"
+    trigger_region = "us-central1"    # <-- Asegura que coincida con la región del bucket
   }
 
   service_config {
