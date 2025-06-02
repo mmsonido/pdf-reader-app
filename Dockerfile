@@ -1,10 +1,13 @@
 FROM python:3.11-slim
 WORKDIR /app
 
+# dependencias
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY functions/ ./functions/
+# código
+COPY . .
 
-ENV PORT=8080
-CMD ["gunicorn", "-b", "0.0.0.0:8080", "functions.main:app"]
+# --- ARRANQUE ---
+# ⬅️  si usas main.py en la raíz
+CMD ["gunicorn", "-b", "0.0.0.0:8080", "main:app"]
