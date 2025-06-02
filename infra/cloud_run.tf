@@ -3,13 +3,6 @@ resource "google_cloud_run_service" "api" {
   location = "us-central1"
 
   template {
-    # Único bloque "metadata" para las anotaciones de Knative/autoscaling
-    metadata {
-      annotations = {
-        "autoscaling.knative.dev/maxScale" = "2"
-      }
-    }
-
     spec {
       service_account_name = google_service_account.run_sa.email
 
@@ -28,6 +21,12 @@ resource "google_cloud_run_service" "api" {
       }
 
       container_concurrency = 1
+    }
+
+    metadata {
+      annotations = {
+        "autoscaling.knative.dev/maxScale" = "2"
+      }
     }
   }
 
