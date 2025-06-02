@@ -1,20 +1,18 @@
-# Dockerfile
-
-# 1. Partimos de una imagen oficial de Python 3.11 slim
+# FROM base
 FROM python:3.11-slim
 
-# 2. Establecemos carpeta de trabajo
+# Establece el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# 3. Copiamos las dependencias y las instalamos
-COPY functions/requirements.txt ./
+# Ya que estamos en functions/, aquí basta con copiar requirements.txt directamente:
+COPY requirements.txt ./
+
+# Instala las dependencias
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 4. Copiamos el archivo main.py a /app
-COPY functions/main.py ./
+# Copia TODO el resto del código de funciones
+COPY . .
 
-# 5. Exponemos el puerto 8080 (por convención en Cloud Run)
-EXPOSE 8080
-
-# 6. Indicamos a Gunicorn que arranque la app en production
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "main:app"]
+# Expone el puerto que usa Flask (8080) y define el entrypoint
+ENV PORT=8080
+CMD ["python", "main.py"]
