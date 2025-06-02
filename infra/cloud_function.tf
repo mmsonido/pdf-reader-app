@@ -1,6 +1,6 @@
 resource "google_cloudfunctions2_function" "extractor" {
   name     = "pdf-text-extractor"
-  location = "us-central1"
+  location = "us"               # <-- Debe ser "us", igual que tu bucket pdf_raw
   project  = var.project_id
 
   build_config {
@@ -15,21 +15,19 @@ resource "google_cloudfunctions2_function" "extractor" {
       }
     }
 
-    # El service_account debe ir en formato:
-    # projects/<PROJECT_ID>/serviceAccounts/<EMAIL>
+    # Originalmente tenías: google_service_account.func_sa.email
+    # Aquí debes usar el formato completo:
     service_account = "projects/${var.project_id}/serviceAccounts/${google_service_account.func_sa.email}"
   }
 
   event_trigger {
     event_type = "google.cloud.storage.object.v1.finalized"
-
+    # No hace falta especificar trigger_region: heredará la misma ubicación (us)
     event_filters {
       attribute = "bucket"
       value     = "pdf2txt-demo-pdf-raw"
     }
-
-    retry_policy   = "RETRY_POLICY_RETRY"
-    trigger_region = "us-central1"    # <-- Asegura que coincida con la región del bucket
+    retry_policy = "RETRY_POLICY_RETRY"
   }
 
   service_config {
