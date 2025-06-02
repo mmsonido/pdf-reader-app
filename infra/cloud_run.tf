@@ -30,9 +30,10 @@ resource "google_cloud_run_service" "api" {
     }
   }
 
-  traffics {
-    percent          = 100
-    latest_revision  = true
+  # Change "traffics" to "traffic"
+  traffic {
+    percent         = 100
+    latest_revision = true
   }
 }
 
