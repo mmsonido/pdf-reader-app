@@ -15,15 +15,18 @@ resource "google_cloudfunctions2_function" "extractor" {
       }
     }
 
-    service_account = google_service_account.func_sa.email
+    # Must be in projects/<PROJECT_ID>/serviceAccounts/<EMAIL> form
+    service_account = "projects/${var.project_id}/serviceAccounts/${google_service_account.func_sa.email}"
   }
 
   event_trigger {
     event_type = "google.cloud.storage.object.v1.finalized"
+
     event_filters {
       attribute = "bucket"
       value     = "pdf2txt-demo-pdf-raw"
     }
+
     retry_policy = "RETRY_POLICY_RETRY"
   }
 
