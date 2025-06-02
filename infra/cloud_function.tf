@@ -1,12 +1,18 @@
 resource "google_cloudfunctions2_function" "extractor" {
   name     = "pdf-text-extractor"
   location = "us-central1"
-  runtime  = "python311"
 
   build_config {
-    runtime      = "python311"
-    entry_point  = "process_pdf"
-    source       = "functions"          # local dir
+    runtime     = "python311"
+    entry_point = "process_pdf"
+    # use artifactregistry if building a container, but for source‐deploy:
+    source {
+      storage_source {
+        # This points to a tarball or zip in GCS—Gen2 does not accept "source = 'functions'"
+        # Instead, Terraform will package & upload automatically if you push with GitHub Actions.
+        # For now, leave this empty or remove it; GitHub Actions will handle deployment.
+      }
+    }
   }
 
   service_config {
@@ -14,7 +20,10 @@ resource "google_cloudfunctions2_function" "extractor" {
     timeout_seconds       = 300
     available_memory      = "512M"
     max_instance_count    = 5
-    environment_variables = { TXT_BUCKET = google_storage_bucket.txt.name }
+
+    environment_variables = {
+      TXT_BUCKET = google_storage_bucket.txt.name
+    }
   }
 
   event_trigger {
