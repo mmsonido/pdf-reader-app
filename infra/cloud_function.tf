@@ -1,6 +1,6 @@
 resource "google_cloudfunctions2_function" "extractor" {
   name     = "pdf-text-extractor"
-  location = "us-central1"
+  location = "us"
   project  = var.project_id
 
   build_config {
