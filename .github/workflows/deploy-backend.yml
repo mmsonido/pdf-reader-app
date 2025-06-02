@@ -1,0 +1,25 @@
+name: deploy-backend
+on:
+  push:
+    paths: [ "backend/**", ".github/workflows/deploy-backend.yml" ]
+jobs:
+  build-deploy:
+    permissions: { id-token: write, contents: read }
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: google-github-actions/auth@v2
+      with:
+        workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+        service_account: ${{ secrets.GCP_CICD_SA }}
+    - uses: google-github-actions/setup-gcloud@v2
+    - run: |
+        gcloud builds submit backend \
+          --tag us-central1-docker.pkg.dev/$PROJECT_ID/backend-repo/pdf-api:latest
+        gcloud run deploy pdf-api \
+          --image us-central1-docker.pkg.dev/$PROJECT_ID/backend-repo/pdf-api:latest \
+          --region us-central1 \
+          --platform managed \
+          --service-account pdf-api-sa \
+          --allow-unauthenticated \
+          --max-instances 2 --concurrency 1

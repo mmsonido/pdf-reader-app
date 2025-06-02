@@ -1,0 +1,22 @@
+name: deploy-function
+on:
+  push:
+    paths: [ "functions/**", ".github/workflows/deploy-function.yml" ]
+jobs:
+  deploy:
+    permissions: { id-token: write, contents: read }
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: google-github-actions/auth@v2
+      with:
+        workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+        service_account: ${{ secrets.GCP_CICD_SA }}
+    - uses: google-github-actions/setup-gcloud@v2
+    - run: |
+        gcloud functions deploy pdf-text-extractor \
+          --gen2 --region us-central1 --runtime python311 \
+          --source functions --entry-point process_pdf \
+          --trigger-bucket ${PROJECT_ID}-pdf-raw \
+          --service-account pdf-extractor-sa \
+          --memory 512MB --timeout 300s --max-instances 5 --retry

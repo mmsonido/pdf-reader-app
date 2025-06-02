@@ -1,0 +1,22 @@
+name: deploy-frontend
+on:
+  push:
+    paths: [ "frontend/**", ".github/workflows/deploy-frontend.yml" ]
+jobs:
+  deploy:
+    permissions: { id-token: write, contents: read }
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with: { node-version: 18 }
+    - run: |
+        cd frontend
+        npm ci
+        npm run build
+    - uses: google-github-actions/auth@v2
+      with:
+        workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+        service_account: ${{ secrets.GCP_CICD_SA }}
+    - run: |
+        gsutil -m rsync -r frontend/dist gs://${PROJECT_ID}-frontend
