@@ -26,7 +26,7 @@ resource "google_cloudfunctions2_function" "extractor" {
     }
   }
 
-  event_trigger {
+    event_trigger {
     event_type   = "google.cloud.storage.object.v1.finalized"
     retry_policy = "RETRY"
     event_filters {
