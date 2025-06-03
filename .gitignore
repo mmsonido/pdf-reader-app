@@ -1,1 +1,7 @@
 /pdf_extractor_source.zip
+venv/
+functions/venv/
+functions/__pycache__/
+backend/app/__pycache__/
+frontend/node_modules/
+infra/.terraform/
